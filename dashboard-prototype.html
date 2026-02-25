@@ -1,0 +1,904 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PayFit – Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --color-brand: #4040f2;
+    --color-brand-light: #ebe9fe;
+    --color-surface: #ffffff;
+    --color-surface-low: #f5f6f9;
+    --color-surface-mid: #f0f0f3;
+    --color-border: #e0e5eb;
+    --color-border-light: #f0f0f3;
+    --color-text-primary: #030e1d;
+    --color-text-secondary: #4a5568;
+    --color-text-tertiary: #8793a1;
+    --color-green: #00875a;
+    --color-green-bg: #e3fcef;
+    --color-orange: #ff8b00;
+    --color-orange-bg: #fff4e5;
+    --color-red: #de350b;
+    --color-red-bg: #ffebe6;
+    --color-blue-bg: #deebff;
+    --color-blue: #0052cc;
+    --radius-sm: 6px;
+    --radius-md: 8px;
+    --radius-lg: 10px;
+    --radius-xl: 12px;
+    --shadow-sm: 0 1px 2px rgba(4,32,64,0.04);
+    --shadow-md: 0 2px 8px rgba(4,32,64,0.08);
+    --font: 'Inter', sans-serif;
+  }
+
+  body {
+    font-family: var(--font);
+    font-size: 14px;
+    color: var(--color-text-primary);
+    background: var(--color-surface-low);
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    line-height: 1.5;
+  }
+
+  /* ─── UTILITY BAR ──────────────────────────────── */
+  .utility-bar {
+    height: 60px;
+    background: white;
+    border-bottom: 1px solid var(--color-border-light);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 20px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: var(--shadow-sm);
+    gap: 12px;
+  }
+  .utility-bar-left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-shrink: 0;
+  }
+  .logo {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 600;
+    font-size: 16px;
+    color: var(--color-brand);
+    text-decoration: none;
+  }
+  .logo-icon {
+    width: 30px;
+    height: 30px;
+    background: var(--color-brand);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: 700;
+    font-size: 14px;
+  }
+  .logo-text { color: var(--color-text-primary); }
+  .divider-v { width: 1px; height: 16px; background: #d4dae2; border-radius: 30px; }
+  .company-label { font-weight: 500; font-size: 16px; color: var(--color-text-primary); }
+
+  .utility-bar-right { display: flex; align-items: center; gap: 24px; }
+  .search-bar {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--color-surface-low);
+    border-radius: var(--radius-lg);
+    padding: 8px 12px;
+    width: 300px;
+    cursor: text;
+  }
+  .search-bar svg { color: var(--color-text-tertiary); flex-shrink: 0; }
+  .search-bar span { color: var(--color-text-tertiary); font-size: 14px; }
+  .btn-copilot {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 8px 12px;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    background: linear-gradient(108deg, rgba(225,219,253,0.1), rgba(197,229,253,0.1), rgba(166,243,199,0.1));
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    box-shadow: var(--shadow-sm);
+    font-family: var(--font);
+    transition: background 0.15s;
+  }
+  .btn-copilot:hover { background: linear-gradient(108deg, rgba(225,219,253,0.25), rgba(197,229,253,0.2)); }
+  .icon-btn { background: none; border: none; cursor: pointer; color: var(--color-text-secondary); display: flex; align-items: center; justify-content: center; padding: 2px; border-radius: 4px; }
+  .icon-btn:hover { background: var(--color-surface-low); }
+  .avatar {
+    width: 40px; height: 40px;
+    border-radius: 50%;
+    background: var(--color-brand-light);
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 600; font-size: 14px; color: var(--color-brand);
+    cursor: pointer;
+    position: relative;
+  }
+
+  /* ─── LAYOUT ──────────────────────────────── */
+  .app-layout { display: flex; flex: 1; }
+
+  /* ─── SIDEBAR ──────────────────────────────── */
+  .sidebar {
+    width: 296px;
+    min-height: calc(100vh - 60px);
+    background: white;
+    border-right: 1px solid var(--color-border-light);
+    padding: 16px 12px;
+    flex-shrink: 0;
+    position: sticky;
+    top: 60px;
+    height: calc(100vh - 60px);
+    overflow-y: auto;
+  }
+  .nav-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 9px 12px;
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 400;
+    color: var(--color-text-secondary);
+    transition: background 0.1s;
+    text-decoration: none;
+    position: relative;
+  }
+  .nav-item:hover { background: var(--color-surface-low); color: var(--color-text-primary); }
+  .nav-item.active { background: var(--color-brand-light); color: var(--color-brand); font-weight: 500; }
+  .nav-item svg { flex-shrink: 0; }
+  .nav-chevron { margin-left: auto; transition: transform 0.2s; }
+  .nav-group { margin-bottom: 4px; }
+  .nav-sub { padding-left: 36px; font-size: 13px; }
+
+  /* ─── MAIN CONTENT ──────────────────────────────── */
+  .main-content {
+    flex: 1;
+    padding: 40px;
+    max-width: 1144px;
+    overflow: hidden;
+  }
+  .page-title { font-size: 24px; font-weight: 600; margin-bottom: 24px; color: var(--color-text-primary); }
+
+  /* ─── TILE GRID ──────────────────────────────── */
+  .tiles-grid { display: flex; flex-direction: column; gap: 16px; }
+
+  /* ─── CARD / TILE ──────────────────────────────── */
+  .tile {
+    background: white;
+    border-radius: var(--radius-xl);
+    border: 1px solid var(--color-border-light);
+    box-shadow: var(--shadow-sm);
+    overflow: hidden;
+  }
+  .tile-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 24px 32px;
+    border-bottom: 1px solid var(--color-border-light);
+  }
+  .tile-title { font-size: 16px; font-weight: 600; color: var(--color-text-primary); }
+  .tile-body { padding: 24px 32px; }
+
+  /* ─── PAYROLL TIMELINE TILE ──────────────────────────────── */
+  .payroll-tile .tile-body { padding: 24px 32px; }
+  .payroll-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; }
+  .payroll-company { display: flex; flex-direction: column; gap: 8px; }
+  .payroll-company-name { font-size: 16px; font-weight: 600; }
+  .payroll-date { font-size: 13px; color: var(--color-text-tertiary); }
+  .progress-bar { height: 8px; background: var(--color-surface-mid); border-radius: 4px; overflow: hidden; margin-top: 4px; }
+  .progress-fill { height: 100%; background: var(--color-brand); border-radius: 4px; transition: width 0.5s ease; }
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 2px 8px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 500;
+  }
+  .badge-blue { background: var(--color-blue-bg); color: var(--color-blue); }
+  .badge-green { background: var(--color-green-bg); color: var(--color-green); }
+  .badge-orange { background: var(--color-orange-bg); color: var(--color-orange); }
+  .badge-red { background: var(--color-red-bg); color: var(--color-red); }
+  .badge-gray { background: #f0f0f3; color: #4a5568; }
+  .badge-purple { background: #ebe9fe; color: #4040f2; }
+
+  .payroll-cta { display: flex; flex-direction: column; gap: 12px; justify-content: center; }
+  .payroll-cta .badge { align-self: flex-start; }
+  .payroll-cta-title { font-size: 16px; font-weight: 600; }
+  .payroll-cta-sub { font-size: 13px; color: var(--color-text-tertiary); }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 9px 16px;
+    border-radius: var(--radius-md);
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    border: none;
+    font-family: var(--font);
+    transition: filter 0.15s, transform 0.1s;
+  }
+  .btn:hover { filter: brightness(0.95); }
+  .btn:active { transform: scale(0.98); }
+  .btn-primary { background: var(--color-brand); color: white; }
+  .btn-secondary { background: white; color: var(--color-text-primary); border: 1px solid var(--color-border); box-shadow: var(--shadow-sm); }
+  .btn-ghost { background: transparent; color: var(--color-brand); }
+  .btn-sm { padding: 6px 12px; font-size: 13px; }
+  .btn-danger { background: white; color: var(--color-red); border: 1px solid var(--color-red); }
+
+  /* ─── TWO-COL ROW ──────────────────────────────── */
+  .two-col-row { display: grid; grid-template-columns: 614fr 443fr; gap: 16px; }
+
+  /* ─── ABSENCES TILE ──────────────────────────────── */
+  .collab-list { display: flex; flex-direction: column; gap: 0; }
+  .group-label { font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.6px; color: var(--color-text-tertiary); padding: 12px 0 8px; }
+  .collab-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--color-border-light);
+  }
+  .collab-item:last-child { border-bottom: none; }
+  .collab-avatar {
+    width: 40px; height: 40px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 600; font-size: 13px; flex-shrink: 0;
+  }
+  .collab-info { flex: 1; }
+  .collab-name { font-size: 14px; font-weight: 500; }
+  .collab-company { font-size: 12px; color: var(--color-text-tertiary); }
+  .collab-meta { text-align: right; }
+  .collab-dates { font-size: 12px; color: var(--color-text-tertiary); }
+
+  .link { color: var(--color-brand); font-size: 14px; font-weight: 500; text-decoration: none; cursor: pointer; }
+  .link:hover { text-decoration: underline; }
+
+  /* ─── REQUESTS TILE ──────────────────────────────── */
+  .segmented-group {
+    display: flex;
+    background: var(--color-surface-low);
+    border-radius: var(--radius-md);
+    padding: 3px;
+    gap: 2px;
+  }
+  .seg-btn {
+    padding: 6px 14px;
+    border-radius: 6px;
+    border: none;
+    background: transparent;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    font-family: var(--font);
+    color: var(--color-text-secondary);
+    transition: background 0.15s, color 0.15s;
+  }
+  .seg-btn.active { background: white; color: var(--color-text-primary); box-shadow: var(--shadow-sm); }
+
+  .request-item {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding: 20px 0;
+    border-bottom: 1px solid var(--color-border-light);
+  }
+  .request-item:last-child { border-bottom: none; }
+  .request-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
+  .request-person { display: flex; align-items: center; gap: 12px; }
+  .request-name { font-size: 14px; font-weight: 500; }
+  .request-company { font-size: 12px; color: var(--color-text-tertiary); margin-top: 2px; }
+  .request-amount { font-size: 16px; font-weight: 600; color: var(--color-text-primary); }
+  .request-days { font-size: 16px; font-weight: 600; }
+  .request-dates { font-size: 13px; color: var(--color-text-tertiary); padding-left: 52px; }
+  .request-actions { display: flex; gap: 8px; padding-left: 52px; flex-wrap: wrap; }
+
+  /* ─── EVENTS TILE ──────────────────────────────── */
+  .event-section-label { font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.6px; color: var(--color-text-tertiary); margin-bottom: 12px; }
+  .event-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--color-border-light);
+  }
+  .event-item:last-child { border-bottom: none; }
+  .event-illustration {
+    width: 72px; height: 72px;
+    border-radius: var(--radius-lg);
+    background: var(--color-surface-low);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 28px;
+    flex-shrink: 0;
+  }
+  .event-info { flex: 1; }
+  .event-name { font-size: 14px; font-weight: 500; }
+  .event-company { display: inline-flex; }
+  .event-type { font-size: 13px; color: var(--color-text-tertiary); margin-top: 4px; }
+  .event-date { font-size: 12px; color: var(--color-text-tertiary); margin-bottom: 4px; }
+
+  /* ─── DISCOVERY CARDS ──────────────────────────────── */
+  .discovery-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .discovery-card {
+    background: var(--color-surface-low);
+    border-radius: var(--radius-xl);
+    padding: 20px;
+    display: flex;
+    gap: 16px;
+    align-items: flex-start;
+    cursor: pointer;
+    transition: background 0.15s;
+    border: 1px solid transparent;
+  }
+  .discovery-card:hover { background: white; border-color: var(--color-border); box-shadow: var(--shadow-sm); }
+  .discovery-card.large { grid-column: span 1; grid-row: span 2; flex-direction: column; }
+  .discovery-img { width: 80px; height: 80px; border-radius: var(--radius-md); object-fit: cover; background: #e0e5eb; flex-shrink: 0; }
+  .discovery-img.large { width: 100%; height: 140px; }
+  .discovery-tag { font-size: 11px; font-weight: 600; color: var(--color-brand); text-transform: uppercase; letter-spacing: 0.4px; margin-bottom: 4px; }
+  .discovery-card-title { font-size: 14px; font-weight: 500; line-height: 1.4; margin-bottom: 4px; }
+  .discovery-card-desc { font-size: 13px; color: var(--color-text-tertiary); line-height: 1.4; }
+  .discovery-card-meta { font-size: 12px; color: var(--color-text-tertiary); margin-bottom: 6px; }
+
+  /* ─── TOOLTIP / HOVER ──────────────────────────────── */
+  [data-tooltip] { position: relative; }
+  [data-tooltip]:hover::after {
+    content: attr(data-tooltip);
+    position: absolute;
+    bottom: calc(100% + 6px);
+    left: 50%;
+    transform: translateX(-50%);
+    background: #030e1d;
+    color: white;
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-size: 12px;
+    white-space: nowrap;
+    pointer-events: none;
+    z-index: 200;
+  }
+
+  /* ─── TOAST ──────────────────────────────── */
+  .toast {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    background: #030e1d;
+    color: white;
+    padding: 12px 20px;
+    border-radius: var(--radius-md);
+    font-size: 14px;
+    font-weight: 500;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+    z-index: 999;
+    transform: translateY(80px);
+    opacity: 0;
+    transition: transform 0.3s ease, opacity 0.3s ease;
+  }
+  .toast.show { transform: translateY(0); opacity: 1; }
+
+  /* ─── MODAL OVERLAY ──────────────────────────────── */
+  .modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(3,14,29,0.4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 500;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s;
+  }
+  .modal-overlay.open { opacity: 1; pointer-events: all; }
+  .modal {
+    background: white;
+    border-radius: var(--radius-xl);
+    padding: 32px;
+    width: 480px;
+    max-width: 90vw;
+    box-shadow: 0 20px 60px rgba(3,14,29,0.15);
+    transform: scale(0.95) translateY(10px);
+    transition: transform 0.2s;
+  }
+  .modal-overlay.open .modal { transform: scale(1) translateY(0); }
+  .modal-title { font-size: 18px; font-weight: 600; margin-bottom: 8px; }
+  .modal-sub { font-size: 14px; color: var(--color-text-tertiary); margin-bottom: 24px; }
+  .modal-actions { display: flex; justify-content: flex-end; gap: 8px; margin-top: 24px; }
+
+  /* ─── SCROLLBAR ──────────────────────────────── */
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: #d4dae2; border-radius: 3px; }
+
+  /* ─── ANIMATIONS ──────────────────────────────── */
+  @keyframes fadeSlideIn {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .tile { animation: fadeSlideIn 0.3s ease both; }
+  .tile:nth-child(1) { animation-delay: 0.05s; }
+  .tile:nth-child(2) { animation-delay: 0.1s; }
+  .tile:nth-child(3) { animation-delay: 0.15s; }
+  .tile:nth-child(4) { animation-delay: 0.2s; }
+
+  .notification-dot {
+    width: 8px; height: 8px;
+    background: var(--color-red);
+    border-radius: 50%;
+    position: absolute;
+    top: -1px; right: -1px;
+    border: 2px solid white;
+  }
+</style>
+</head>
+<body>
+
+<!-- UTILITY BAR -->
+<header class="utility-bar">
+  <div class="utility-bar-left">
+    <a class="logo" href="#">
+      <div class="logo-icon">P</div>
+      <span class="logo-text">PayFit</span>
+    </a>
+    <div class="divider-v"></div>
+    <span class="company-label">Acme Corp</span>
+  </div>
+  <div class="utility-bar-right">
+    <div class="search-bar">
+      <svg width="16" height="16" viewBox="0 0 20 20" fill="none"><circle cx="9" cy="9" r="6" stroke="#8793a1" stroke-width="1.5"/><path d="M13.5 13.5L17 17" stroke="#8793a1" stroke-width="1.5" stroke-linecap="round"/></svg>
+      <span>Search...</span>
+    </div>
+    <button class="btn-copilot" onclick="showToast('✨ Copilot activé')">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="7" stroke="#4040f2" stroke-width="1.2"/><path d="M5 8h6M8 5v6" stroke="#4040f2" stroke-width="1.5" stroke-linecap="round"/></svg>
+      Ask Copilot
+    </button>
+    <button class="icon-btn" data-tooltip="Messages">
+      <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M4 4h12a1 1 0 0 1 1 1v8a1 1 0 0 1-1 1H6l-3 3V5a1 1 0 0 1 1-1z" stroke="#4a5568" stroke-width="1.5" fill="none"/><circle cx="10" cy="9" r="1" fill="#4a5568"/><circle cx="7" cy="9" r="1" fill="#4a5568"/><circle cx="13" cy="9" r="1" fill="#4a5568"/></svg>
+    </button>
+    <button class="icon-btn" data-tooltip="Paramètres" onclick="window.location='settings-prototype.html'">
+      <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M10 12.5a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5z" stroke="#4a5568" stroke-width="1.5"/><path d="M16.2 10c0-.3 0-.6-.1-.9l1.9-1.5-1.8-3.1-2.2.9c-.5-.4-1-.7-1.6-.9L12 2H8l-.4 2.5c-.6.2-1.1.5-1.6.9l-2.2-.9L2 7.6l1.9 1.5c-.1.3-.1.6-.1.9s0 .6.1.9L2 12.4l1.8 3.1 2.2-.9c.5.4 1 .7 1.6.9L8 18h4l.4-2.5c.6-.2 1.1-.5 1.6-.9l2.2.9 1.8-3.1-1.9-1.5c.1-.3.1-.6.1-.9z" stroke="#4a5568" stroke-width="1.5" stroke-linejoin="round"/></svg>
+    </button>
+    <button class="icon-btn" data-tooltip="Notifications" style="position:relative">
+      <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M10 2a6 6 0 0 1 6 6v3l2 2v1H2v-1l2-2V8a6 6 0 0 1 6-6z" stroke="#4a5568" stroke-width="1.5" fill="none"/><path d="M8 15a2 2 0 0 0 4 0" stroke="#4a5568" stroke-width="1.5"/></svg>
+      <span class="notification-dot"></span>
+    </button>
+    <div class="avatar" data-tooltip="Thomas">TM</div>
+  </div>
+</header>
+
+<!-- APP LAYOUT -->
+<div class="app-layout">
+
+  <!-- SIDEBAR -->
+  <nav class="sidebar">
+    <div class="nav-group">
+      <a class="nav-item active" href="dashboard-prototype.html" onclick="navigate(event, 'dashboard')">
+        <svg width="18" height="18" viewBox="0 0 20 20" fill="none"><rect x="2" y="2" width="7" height="7" rx="1.5" fill="#4040f2"/><rect x="11" y="2" width="7" height="7" rx="1.5" fill="#4040f2"/><rect x="2" y="11" width="7" height="7" rx="1.5" fill="#4040f2"/><rect x="11" y="11" width="7" height="7" rx="1.5" fill="#4040f2"/></svg>
+        My dashboard
+      </a>
+    </div>
+    <div class="nav-group">
+      <a class="nav-item" href="employees-prototype.html" onclick="return true">
+        <svg width="18" height="18" viewBox="0 0 20 20" fill="none"><circle cx="8" cy="7" r="3" stroke="#4a5568" stroke-width="1.5"/><path d="M2 17c0-3.31 2.686-6 6-6s6 2.69 6 6" stroke="#4a5568" stroke-width="1.5" stroke-linecap="round"/><circle cx="15" cy="7" r="2.5" stroke="#4a5568" stroke-width="1.5"/><path d="M17 13c1.5.5 3 1.8 3 4" stroke="#4a5568" stroke-width="1.5" stroke-linecap="round"/></svg>
+        My employees
+      </a>
+    </div>
+    <div class="nav-group">
+      <a class="nav-item" href="#" onclick="navigate(event, 'validations')">
+        <svg width="18" height="18" viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="8" stroke="#4a5568" stroke-width="1.5"/><path d="M7 10l2 2 4-4" stroke="#4a5568" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        Validations
+        <svg class="nav-chevron" width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M5 4l3 3-3 3" stroke="#8793a1" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </a>
+    </div>
+    <div class="nav-group">
+      <a class="nav-item" href="#" onclick="navigate(event, 'checklist')">
+        <svg width="18" height="18" viewBox="0 0 20 20" fill="none"><rect x="3" y="3" width="14" height="14" rx="2" stroke="#4a5568" stroke-width="1.5"/><path d="M7 10l2 2 4-4" stroke="#4a5568" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        Post-payroll checklist
+        <svg class="nav-chevron" width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M5 4l3 3-3 3" stroke="#8793a1" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </a>
+    </div>
+    <div class="nav-group">
+      <a class="nav-item" href="payroll-prototype.html" onclick="return true">
+        <svg width="18" height="18" viewBox="0 0 20 20" fill="none"><rect x="2" y="5" width="16" height="12" rx="2" stroke="#4a5568" stroke-width="1.5"/><path d="M6 5V4a4 4 0 0 1 8 0v1" stroke="#4a5568" stroke-width="1.5"/><path d="M10 11v2M8 12h4" stroke="#4a5568" stroke-width="1.5" stroke-linecap="round"/></svg>
+        Run my payroll
+        <svg class="nav-chevron" width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M5 4l3 3-3 3" stroke="#8793a1" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </a>
+    </div>
+    <div class="nav-group">
+      <a class="nav-item" href="#" onclick="navigate(event, 'payitems')">
+        <svg width="18" height="18" viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="8" stroke="#4a5568" stroke-width="1.5"/><path d="M10 6v8M8 8h3a1.5 1.5 0 0 1 0 3H8" stroke="#4a5568" stroke-width="1.5" stroke-linecap="round"/></svg>
+        Pay items
+        <svg class="nav-chevron" width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M5 4l3 3-3 3" stroke="#8793a1" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </a>
+    </div>
+    <div class="nav-group">
+      <a class="nav-item" href="#" onclick="navigate(event, 'benefits')">
+        <svg width="18" height="18" viewBox="0 0 20 20" fill="none"><path d="M10 3l2 4 4.5.65-3.25 3.17.77 4.48L10 13.2l-4.02 2.1.77-4.48L3.5 7.65 8 7 10 3z" stroke="#4a5568" stroke-width="1.5" fill="none" stroke-linejoin="round"/></svg>
+        Benefits in kind
+      </a>
+    </div>
+    <div class="nav-group">
+      <a class="nav-item" href="#" onclick="navigate(event, 'pensions')">
+        <svg width="18" height="18" viewBox="0 0 20 20" fill="none"><rect x="3" y="8" width="14" height="10" rx="2" stroke="#4a5568" stroke-width="1.5"/><path d="M7 8V6a3 3 0 0 1 6 0v2" stroke="#4a5568" stroke-width="1.5"/></svg>
+        Pensions
+        <svg class="nav-chevron" width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M5 4l3 3-3 3" stroke="#8793a1" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </a>
+    </div>
+    <div class="nav-group">
+      <a class="nav-item" href="#" onclick="navigate(event, 'team')">
+        <svg width="18" height="18" viewBox="0 0 20 20" fill="none"><circle cx="6" cy="8" r="2.5" stroke="#4a5568" stroke-width="1.5"/><circle cx="14" cy="8" r="2.5" stroke="#4a5568" stroke-width="1.5"/><path d="M1 16c0-2.76 2.24-5 5-5M14 11c2.76 0 5 2.24 5 5" stroke="#4a5568" stroke-width="1.5" stroke-linecap="round"/><circle cx="10" cy="9" r="3" stroke="#4a5568" stroke-width="1.5"/><path d="M4 18c0-3.31 2.69-6 6-6s6 2.69 6 6" stroke="#4a5568" stroke-width="1.5" stroke-linecap="round"/></svg>
+        My team
+        <svg class="nav-chevron" width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M5 4l3 3-3 3" stroke="#8793a1" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </a>
+    </div>
+
+  </nav>
+
+  <!-- MAIN CONTENT -->
+  <main class="main-content">
+    <h1 class="page-title">Hello Thomas 👋</h1>
+
+    <div class="tiles-grid">
+
+      <!-- PAYROLL TILE -->
+      <div class="tile payroll-tile">
+        <div class="tile-head">
+          <span class="tile-title">Your January payrolls</span>
+        </div>
+        <div class="tile-body">
+          <div class="payroll-grid">
+            <div style="display:flex;flex-direction:column;gap:20px;">
+              <div class="payroll-company">
+                <div style="display:flex;align-items:center;gap:8px;">
+                  <span class="payroll-company-name">Bistrot du Marché</span>
+                  <span class="badge badge-blue">Payroll being prepared</span>
+                </div>
+                <div class="payroll-date">Closing date on January 27 — in 7 days</div>
+                <div class="progress-bar"><div class="progress-fill" style="width:85%"></div></div>
+              </div>
+              <div class="payroll-company">
+                <div style="display:flex;align-items:center;gap:8px;">
+                  <span class="payroll-company-name">L'Assiette d'Or</span>
+                  <span class="badge badge-blue">Payroll being prepared</span>
+                </div>
+                <div class="payroll-date">Closing date on January 29 — in 9 days</div>
+                <div class="progress-bar"><div class="progress-fill" style="width:69%"></div></div>
+              </div>
+            </div>
+            <div class="payroll-cta">
+              <span class="badge badge-green">2 payrolls being prepared</span>
+              <div>
+                <div class="payroll-cta-title">You have time to prepare your payrolls</div>
+                <div class="payroll-cta-sub" style="margin-top:4px;">Collect and enter your companies' payroll information on PayFit</div>
+              </div>
+              <button class="btn btn-primary" style="align-self:flex-start" onclick="showModal('payroll')">Manage payroll</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- TWO-COL ROW: Absences + Events -->
+      <div class="two-col-row">
+
+        <!-- ABSENCES TILE -->
+        <div class="tile">
+          <div class="tile-head">
+            <span class="tile-title">Who's off today?</span>
+            <a class="link" href="#" onclick="navigate(event,'calendar')">Calendar</a>
+          </div>
+          <div class="tile-body" style="padding-top:12px;">
+            <div class="collab-list">
+              <div class="group-label">Today</div>
+              <div class="collab-item">
+                <div class="collab-avatar" style="background:#ffd470;color:#7c5800;">MT</div>
+                <div class="collab-info">
+                  <div class="collab-name">Max Thomson</div>
+                  <div class="collab-company">Bistro du Marché</div>
+                </div>
+                <div class="collab-meta">
+                  <span class="badge badge-red">Sick leave</span>
+                  <div class="collab-dates" style="margin-top:4px;">From 17 to 25 Oct</div>
+                </div>
+              </div>
+              <div class="group-label" style="margin-top:8px;">To come (30 days)</div>
+              <div class="collab-item">
+                <div class="collab-avatar" style="background:#ffac99;color:#7c2600;">MT</div>
+                <div class="collab-info">
+                  <div class="collab-name">Max Thomson</div>
+                  <div class="collab-company">L'Assiette d'Or</div>
+                </div>
+                <div class="collab-meta">
+                  <span class="badge badge-green">Congés</span>
+                  <div class="collab-dates" style="margin-top:4px;">From 4 to 21 Oct</div>
+                </div>
+              </div>
+              <div class="collab-item">
+                <div class="collab-avatar" style="background:#c5e5fd;color:#0052cc;">JL</div>
+                <div class="collab-info">
+                  <div class="collab-name">Jérôme Lightbringer</div>
+                  <div class="collab-company">L'Assiette d'Or</div>
+                </div>
+                <div class="collab-meta">
+                  <span class="badge badge-orange">Absence</span>
+                  <div class="collab-dates" style="margin-top:4px;">From 29 Dec to 30 Dec</div>
+                </div>
+              </div>
+              <div class="collab-item">
+                <div class="collab-avatar" style="background:#e3fcef;color:#00875a;">LB</div>
+                <div class="collab-info">
+                  <div class="collab-name">Lina Benalia</div>
+                  <div class="collab-company">Bistro du Marché</div>
+                </div>
+                <div class="collab-meta">
+                  <span class="badge badge-blue">RTT</span>
+                  <div class="collab-dates" style="margin-top:4px;">From 10 to 12 Nov</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- EVENTS TILE -->
+        <div class="tile">
+          <div class="tile-head">
+            <span class="tile-title">On the agenda</span>
+          </div>
+          <div class="tile-body" style="padding-top:12px;">
+            <div class="event-section-label">Today</div>
+            <div class="event-item">
+              <div class="event-illustration">🎂</div>
+              <div class="event-info">
+                <div class="event-name">Jean Nguyen</div>
+                <span class="badge badge-gray" style="margin:4px 0;display:inline-block;">Bistro du Marché</span>
+                <div class="event-type">Birthday</div>
+              </div>
+            </div>
+            <div class="event-section-label" style="margin-top:12px;">Upcoming</div>
+            <div class="event-item">
+              <div class="event-illustration">📨</div>
+              <div class="event-info">
+                <div class="event-date">Monday, 10 November</div>
+                <div class="event-name">Lina Benalia</div>
+                <span class="badge badge-gray" style="margin:4px 0;display:inline-block;">Bistro du Marché</span>
+                <div class="event-type">Contract end</div>
+              </div>
+            </div>
+            <div class="event-item">
+              <div class="event-illustration">🇫🇷</div>
+              <div class="event-info">
+                <div class="event-date">Tuesday, 11 November</div>
+                <div class="event-name">Jour de l'Armistice</div>
+                <div class="event-type">Bank holidays</div>
+              </div>
+            </div>
+            <div class="event-item">
+              <div class="event-illustration">🎉</div>
+              <div class="event-info">
+                <div class="event-date">Friday, 17 September</div>
+                <div class="event-name">Jérôme Lightbringer</div>
+                <span class="badge badge-gray" style="margin:4px 0;display:inline-block;">L'Assiette d'Or</span>
+                <div class="event-type">Company anniversary · 3 ans</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div><!-- end two-col-row -->
+
+      <!-- REQUESTS TILE -->
+      <div class="tile">
+        <div class="tile-head" style="flex-direction:column;align-items:flex-start;gap:16px;">
+          <span class="tile-title">10 requests pending</span>
+          <div class="segmented-group">
+            <button class="seg-btn active" onclick="filterRequests(this,'all')">All</button>
+            <button class="seg-btn" onclick="filterRequests(this,'expenses')">Expenses</button>
+            <button class="seg-btn" onclick="filterRequests(this,'absence')">Absence</button>
+            <button class="seg-btn" onclick="filterRequests(this,'advance')">Advance payment</button>
+          </div>
+        </div>
+        <div class="tile-body" id="requests-body">
+          <div class="request-item" data-type="absence">
+            <div class="request-top">
+              <div class="request-person">
+                <div class="collab-avatar" style="background:#c5e5fd;color:#0052cc;width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:600;font-size:13px;flex-shrink:0;position:relative;">
+                  JL
+                  <span style="position:absolute;bottom:-2px;right:-2px;width:18px;height:18px;background:#4040f2;border-radius:4px;display:flex;align-items:center;justify-content:center;">
+                    <svg width="10" height="10" viewBox="0 0 12 12" fill="none"><rect x="1" y="2" width="10" height="9" rx="1.5" stroke="white" stroke-width="1.2"/><path d="M4 1v2M8 1v2M1 5h10" stroke="white" stroke-width="1.2" stroke-linecap="round"/></svg>
+                  </span>
+                </div>
+                <div>
+                  <div class="request-name">Jérôme Lightbringer</div>
+                  <div class="request-company">L'Assiette d'Or</div>
+                </div>
+              </div>
+              <div class="request-days">8 days</div>
+            </div>
+            <div class="request-dates">Absence · Paid holidays · 29 déc. 2026 – 30 déc. 2026</div>
+            <div class="request-actions">
+              <button class="btn btn-primary btn-sm" onclick="handleRequest(this,'confirm')">Confirm</button>
+              <button class="btn btn-secondary btn-sm" onclick="handleRequest(this,'decline')">Decline</button>
+              <button class="btn btn-ghost btn-sm" onclick="showModal('detail')">See detail</button>
+            </div>
+          </div>
+          <div class="request-item" data-type="expenses">
+            <div class="request-top">
+              <div class="request-person">
+                <div class="collab-avatar" style="background:#ffac99;color:#7c2600;width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:600;font-size:13px;flex-shrink:0;position:relative;">
+                  JL
+                  <span style="position:absolute;bottom:-2px;right:-2px;width:18px;height:18px;background:#4040f2;border-radius:4px;display:flex;align-items:center;justify-content:center;">
+                    <svg width="10" height="10" viewBox="0 0 12 12" fill="none"><rect x="1" y="2" width="10" height="9" rx="1.5" stroke="white" stroke-width="1.2"/><path d="M4 1v2M8 1v2M1 5h10" stroke="white" stroke-width="1.2" stroke-linecap="round"/></svg>
+                  </span>
+                </div>
+                <div>
+                  <div class="request-name">Jérôme Lightbringer</div>
+                  <div class="request-company">Bistro du Marché</div>
+                </div>
+              </div>
+              <div class="request-amount">110,99€</div>
+            </div>
+            <div class="request-dates">Expense report · Restaurant client</div>
+            <div class="request-actions">
+              <button class="btn btn-primary btn-sm" onclick="handleRequest(this,'confirm')">Approve</button>
+              <button class="btn btn-danger btn-sm" onclick="handleRequest(this,'decline')">Reject</button>
+              <button class="btn btn-ghost btn-sm" onclick="showModal('detail')">See detail</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- DISCOVERY TILE -->
+      <div class="tile">
+        <div class="tile-head">
+          <span class="tile-title">Recommended for you</span>
+        </div>
+        <div class="tile-body">
+          <div class="discovery-grid">
+            <div class="discovery-card" onclick="showModal('enps')">
+              <div class="discovery-img" style="background:linear-gradient(135deg,#ebe9fe,#c5e5fd);display:flex;align-items:center;justify-content:center;font-size:28px;">📊</div>
+              <div>
+                <div class="discovery-tag">New</div>
+                <div class="discovery-card-title">eNPS Survey</div>
+                <div class="discovery-card-desc">Get an idea of how your employees perceive your company.</div>
+                <button class="btn btn-ghost btn-sm" style="margin-top:8px;padding:0;">Try →</button>
+              </div>
+            </div>
+            <div class="discovery-card" onclick="showModal('reimbursement')">
+              <div class="discovery-img" style="background:linear-gradient(135deg,#e3fcef,#c5e5fd);display:flex;align-items:center;justify-content:center;font-size:28px;">💸</div>
+              <div>
+                <div class="discovery-tag">New</div>
+                <div class="discovery-card-title">Simplified reimbursement</div>
+                <div class="discovery-card-desc">Gather details from the previous contract, salary, working hours, etc.</div>
+                <button class="btn btn-ghost btn-sm" style="margin-top:8px;padding:0;">Try →</button>
+              </div>
+            </div>
+            <div class="discovery-card large" onclick="showToast('Article ouvert')">
+              <div class="discovery-img large" style="background:linear-gradient(135deg,#fff4e5,#ebe9fe);display:flex;align-items:center;justify-content:center;font-size:48px;">📰</div>
+              <div>
+                <div class="discovery-card-meta">3 min read</div>
+                <div class="discovery-card-title" style="font-size:15px;">Upcoming corporate tax changes in 2026. What you need to know.</div>
+                <div class="discovery-card-desc">Découvrez comment la nouvelle taxe aura un impact sur votre entreprise.</div>
+                <button class="btn btn-ghost btn-sm" style="margin-top:8px;padding:0;">Read the article →</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- end tiles-grid -->
+
+    <!-- FEEDBACK BAR -->
+    <div style="display:flex;align-items:center;gap:8px;margin-top:24px;padding-bottom:24px;color:var(--color-text-tertiary);font-size:13px;">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 3h10a1 1 0 0 1 1 1v7a1 1 0 0 1-1 1H5l-3 3V4a1 1 0 0 1 1-1z" stroke="#8793a1" stroke-width="1.2" fill="none"/></svg>
+      Any feedback or suggestions about this dashboard?
+      <a class="link" href="#" onclick="showModal('feedback')">Share with us</a>
+    </div>
+  </main>
+</div>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="modal-overlay" onclick="closeModal(event)">
+  <div class="modal" id="modal">
+    <div class="modal-title" id="modal-title">Action</div>
+    <div class="modal-sub" id="modal-sub">Détail de l'action</div>
+    <div id="modal-body"></div>
+    <div class="modal-actions">
+      <button class="btn btn-secondary" onclick="closeModalDirect()">Annuler</button>
+      <button class="btn btn-primary" id="modal-cta" onclick="closeModalDirect()">Confirmer</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script>
+  function showToast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 2500);
+  }
+
+  function navigate(e, page) {
+    e.preventDefault();
+    document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+    e.currentTarget.classList.add('active');
+    showToast('Navigation → ' + page);
+  }
+
+  const modals = {
+    payroll: { title: 'Manage payroll', sub: 'Gérer la paie de vos établissements', cta: 'Lancer la paie' },
+    detail: { title: 'Request detail', sub: 'Consulter les détails de cette demande', cta: 'Approuver' },
+    feedback: { title: 'Share feedback', sub: 'Votre avis nous aide à améliorer le dashboard.', cta: 'Envoyer' },
+    enps: { title: 'eNPS Survey', sub: 'Mesurez l\'engagement de vos collaborateurs via un sondage anonyme.', cta: 'Activer' },
+    reimbursement: { title: 'Simplified reimbursement', sub: 'Automatisez les remboursements de frais de vos employés.', cta: 'Essayer' },
+  };
+
+  function showModal(type) {
+    const m = modals[type] || { title: type, sub: '', cta: 'OK' };
+    document.getElementById('modal-title').textContent = m.title;
+    document.getElementById('modal-sub').textContent = m.sub;
+    document.getElementById('modal-cta').textContent = m.cta;
+    document.getElementById('modal-overlay').classList.add('open');
+  }
+
+  function closeModal(e) {
+    if (e.target === document.getElementById('modal-overlay')) closeModalDirect();
+  }
+  function closeModalDirect() {
+    document.getElementById('modal-overlay').classList.remove('open');
+  }
+
+  function handleRequest(btn, action) {
+    const item = btn.closest('.request-item');
+    item.style.transition = 'opacity 0.3s, transform 0.3s';
+    item.style.opacity = '0';
+    item.style.transform = 'translateX(20px)';
+    setTimeout(() => item.remove(), 300);
+    showToast(action === 'confirm' ? '✅ Demande approuvée' : '❌ Demande refusée');
+  }
+
+  function filterRequests(btn, type) {
+    document.querySelectorAll('.seg-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    document.querySelectorAll('.request-item').forEach(item => {
+      if (type === 'all' || item.dataset.type === type) {
+        item.style.display = '';
+      } else {
+        item.style.display = 'none';
+      }
+    });
+  }
+
+  // Keyboard: Escape closes modal
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') closeModalDirect();
+  });
+</script>
+</body>
+</html>
